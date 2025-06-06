@@ -31,35 +31,6 @@ app.get("/api/whoami", function (req, res) {
   res.json({ ipaddress: ip, language: language, software: software });
 });
 
-app.post("/api/shorturl", (req, res) => {
-  const originalUrl = req.body.url;
-  const urlObject = urlParser.parse(originalUrl);
-
-  // Validate hostname using DNS
-  dns.lookup(urlObject.hostname, (err) => {
-    if (err) {
-      return res.json({ error: "invalid url" });
-    }
-
-    // Store URL
-    const shortUrl = id++;
-    urls.push({ original_url: originalUrl, short_url: shortUrl });
-
-    res.json({ original_url: originalUrl, short_url: shortUrl });
-  });
-});
-
-app.get("/api/shorturl/:short_url", (req, res) => {
-  const short_url = parseInt(req.params.short_url);
-  const found = urls.find((entry) => entry.short_url === short_url);
-
-  if (found) {
-    res.redirect(found.original_url);
-  } else {
-    res.json({ error: "No short URL found for the given input" });
-  }
-});
-
 // listen for requests :)
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log("Your app is listening on port " + listener.address().port);
